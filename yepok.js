@@ -2,6 +2,8 @@
 
 var minimist = require('minimist');
 var _ = require('lodash');
+var EventEmitter = require('events').EventEmitter;
+var ee = new EventEmitter();
 
 // verrs = { arg: [err, err], ...}
 
@@ -15,12 +17,15 @@ module.exports = function(_argv, _validators, callback){
 
   var argv = minimist(_argv);
   var verrs = {};
+  var numParams = 0;
+  var numOK = 0;
 
   for (var arg in argv){
     console.log(arg + ' of argv: ' + argv[arg]); 
     // parse params for each arg
     var params = argv[arg].toString().split(',');
     for (var i=0; i<params.length; i++){
+      numParams++;
       console.log( arg + ' params[' + i + ']: ' + params[i]);
       // validate each param
       //   check if allowd
@@ -31,19 +36,32 @@ module.exports = function(_argv, _validators, callback){
         // if hasnt failed yet make empty array
         if (!verrs[arg]) verrs[arg] = [];
         verrs[arg].push('input not valid');
-      }
-
-      if (validators[arg] == true){
+      } else if (validators[arg] == true){
         console.log('is boolean test');
         if (argv[arg] != true){
           if (!verrs[arg]) verrs[arg] = [];
             verrs[arg].push('flag must not be folowed by any arguments: ' + params[i]);
         }
+      } else {
+        validators[arg](params[i], function(err){
+          if (err) {
+            if (!verrs[arg]) verrs[arg] = [];
+            verrs.push(err);
+          }
+          ee.emit('checkComplete');
+
+        });
       }
+
     }
-
-    console.log('verrs\n', verrs);
-
   }
+    console.log('verrs\n', verrs);
+    console.log('num params', numParams);
    
 };
+
+ee.on('checkComplete', function(err){
+  numOK++;
+  console.log('num ok', numOK);
+});
+
