@@ -37,7 +37,7 @@ module.exports = function(_argv, _validators, callback){
         console.log('is boolean test');
         if (argv[arg] != true){
           if (!verrs[arg]) verrs[arg] = [];
-            verrs[arg].push = 'arg must not be folowed by parameter';
+            verrs[arg].push('flag must not be folowed by any arguments: ' + params[i]);
         }
       }
     }
