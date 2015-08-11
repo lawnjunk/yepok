@@ -15,7 +15,10 @@ var dashAll = function(param, callback){
   });
 } 
 
-yepok(process.argv.splice(2), {_: ok, a: dashAll , all: dashAll}, function(err, minimist){
+console.log('wtf');
+
+yepok(process.argv.splice(2), {_: ok, b: '*', a: dashAll , all: dashAll}, function(err, minimist){
+  console.log('wat');
  
   if (err) {
     console.log('ERROR:');
