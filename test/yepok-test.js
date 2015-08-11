@@ -18,6 +18,12 @@ var dashA = function(param, callback){
 describe('yepok.js', function(){
   it('it should console log some shit', function(){
     var argv = ['node', 'prgram.js', '-a', 'lulwat', '-a', 'what',  '-hxy', 'hey', 'that', 'is so sick'];
-    yepok(argv.slice(2), {a: dashA ,x: true, y: true , _: true});
+    yepok(argv.slice(2), {a: dashA ,x: true, y: true , _: true}, function(err, data){
+      if (err){
+        console.log('there was an err', err);
+      }
+      console.log('data', data);
+
+    });
   });
 });
