@@ -50,24 +50,32 @@ var yepok =  function(_argv, _validators, callback){
 
   var argIsBoolean = function(){
     if (validators[arg] == true){
-      console.log('is boolean test');
       if (argv[arg] != true){
         if (!verrs[arg]) verrs[arg] = [];
-        verrs[arg].push('flag must not be folowed by any arguments: ' + params[i]);
+        verrs[arg].push('flag must not be folowed by any paramiters: ' + params[i]);
       }
       ee.emit('checkComplete');
     }
   };
 
+  var argIsAstrix = function(){
+    if(validators[arg] === '*') {
+      ee.emit('checkComplete'); 
+    }
+  };
+
   var argHasValidator = function(){
-    validators[arg](params[i], function(err){
-      if (err) {
-        if (!verrs[arg]) verrs[arg] = [];
-        verrs[arg].push(err);
-      }
-      ee.emit('checkComplete');
-    });
+    if (_.isFunction(validators[arg])){
+      validators[arg](params[i], function(err){
+        if (err) {
+          if (!verrs[arg]) verrs[arg] = [];
+          verrs[arg].push(err);
+        }
+        ee.emit('checkComplete');
+      });
+    }
   }
+
 
   for (var arg in argv){
     var params = argv[arg].toString().split(',');
@@ -75,10 +83,17 @@ var yepok =  function(_argv, _validators, callback){
       numParams++;
       isValidArg();
       argIsBoolean();
+      argIsAstrix();
       argHasValidator();
     }
   }
+  
   paramCountDone = true;
+  
+  // finish will only envoke now callback if all validators were syncronious
+  ee.emit('finish');
+  
+  console.log('total numParams', numParams);
 };
 
 module.exports = yepok;
