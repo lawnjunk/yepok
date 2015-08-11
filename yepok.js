@@ -4,13 +4,10 @@ var minimist = require('minimist');
 var _ = require('lodash');
 var EventEmitter = require('events').EventEmitter;
 var ee = new EventEmitter();
+var initialValidators = require('./lib/default-validators.js')(ee);;
+var util = require('util');
 
 var yepok =  function(_argv, _validators, callback){
-  // parse argv
-  // for each arg split up diff params and validate
-  // once all paramiters for all args have been validated call callback
- 
-  // by default no arguments are allowed
   var validators =  _validators || {};
 
   // parse arguments with minimist
@@ -40,54 +37,23 @@ var yepok =  function(_argv, _validators, callback){
     };
   });
 
-  var isValidArg = function(){
-    if (!validators[arg]) {
-      if (!verrs[arg]) verrs[arg] = [];
-      verrs[arg].push('input not valid');
-      ee.emit('checkComplete');
-    }
-  };
-
-  var argIsBoolean = function(){
-    if (validators[arg] == true){
-      if (argv[arg] != true){
-        if (!verrs[arg]) verrs[arg] = [];
-        verrs[arg].push('flag must not be folowed by any paramiters: ' + params[i]);
-      }
-      ee.emit('checkComplete');
-    }
-  };
-
-  var argIsAstrix = function(){
-    if(validators[arg] === '*') {
-      ee.emit('checkComplete'); 
-    }
-  };
-
-  var argHasValidator = function(){
-    if (_.isFunction(validators[arg])){
-      validators[arg](params[i], function(err){
-        if (err) {
-          if (!verrs[arg]) verrs[arg] = [];
-          verrs[arg].push(err);
-        }
-        ee.emit('checkComplete');
-      });
-    }
-  }
-
+  // called everytime there is an error
+  ee.on('error', function(arg, err){
+    if (!verrs[arg]) verrs[arg] = [];
+    verrs[arg].push(err);
+  });
 
   for (var arg in argv){
     var params = argv[arg].toString().split(',');
     for (var i=0; i<params.length; i++){
       numParams++;
-      isValidArg();
-      argIsBoolean();
-      argIsAstrix();
-      argHasValidator();
+      initialValidators.forEach(function(initialValidator){
+        util.inherits(ee, initialValidator);
+        initialValidator(arg, validators[arg], params[i]);
+      });
     }
   }
-  
+
   paramCountDone = true;
   
   // finish will only envoke now callback if all validators were syncronious
@@ -95,5 +61,7 @@ var yepok =  function(_argv, _validators, callback){
   
   console.log('total numParams', numParams);
 };
+
+util.inherits(yepok, EventEmitter);
 
 module.exports = yepok;

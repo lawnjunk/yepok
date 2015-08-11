@@ -16,7 +16,6 @@ var dashAll = function(param, callback){
 } 
 
 console.log('wtf');
-
 yepok(process.argv.splice(2), {_: ok, b: '*', a: dashAll , all: dashAll}, function(err, minimist){
   console.log('wat');
  
