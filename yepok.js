@@ -4,17 +4,16 @@ var minimist = require('minimist');
 var _ = require('lodash');
 var EventEmitter = require('events').EventEmitter;
 var ee = new EventEmitter();
-var initialValidators = require('./lib/default-validators.js')(ee);;
-var util = require('util');
+var yepokValidators = require('./lib/default-validators.js')(ee);;
 
 var yepok =  function(_argv, _validators, callback){
-  var validators =  _validators || {};
+  var userValidators =  _validators || {};
+  var verrs = {}; 
 
   // parse arguments with minimist
   var argv = minimist(_argv);
-  var verrs = {}; // verrs = { arg: [err, err], ...}
 
-  // initialize counters
+  // initialize yepok counters
   var paramCountDone = false;
   var numParams = 0;
   var numOK = 0;
@@ -27,6 +26,12 @@ var yepok =  function(_argv, _validators, callback){
     };
   });
 
+  // called everytime there is an error
+  ee.on('error', function(arg, err){
+    if (!verrs[arg]) verrs[arg] = [];
+    verrs[arg].push(err);
+  });
+  
   // called once all paramiters have been counted and finished validiation
   ee.on('finish', function(){
     if (paramCountDone && numOK == numParams){
@@ -37,23 +42,18 @@ var yepok =  function(_argv, _validators, callback){
     };
   });
 
-  // called everytime there is an error
-  ee.on('error', function(arg, err){
-    if (!verrs[arg]) verrs[arg] = [];
-    verrs[arg].push(err);
-  });
-
-  for (var arg in argv){
-    var params = argv[arg].toString().split(',');
-    for (var i=0; i<params.length; i++){
+  // validate each flag and its paramiter
+  _.forEach(argv, function(n, arg){
+    var parameters = argv[arg].toString().split(',');
+    _.forEach(parameters, function(param){
       numParams++;
-      initialValidators.forEach(function(initialValidator){
-        util.inherits(ee, initialValidator);
-        initialValidator(arg, validators[arg], params[i]);
+      yepokValidators.forEach(function(yepokValidator){
+        yepokValidator(arg, userValidators[arg], param);
       });
-    }
-  }
-
+    });
+  });
+  
+  // mark that all paramiters have been acounted for
   paramCountDone = true;
   
   // finish will only envoke now callback if all validators were syncronious
@@ -62,6 +62,5 @@ var yepok =  function(_argv, _validators, callback){
   console.log('total numParams', numParams);
 };
 
-util.inherits(yepok, EventEmitter);
 
 module.exports = yepok;
