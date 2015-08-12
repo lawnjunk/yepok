@@ -43,8 +43,8 @@ var yepok =  function(_argv, _validators, callback){
   });
 
   // validate each flag and its paramiter
-  _.forEach(argv, function(n, arg){
-    var parameters = argv[arg].toString().split(',');
+  _.forEach(argv, function(n, arg, array){
+    var parameters = array[arg].toString().split(',');
     _.forEach(parameters, function(param){
       numParams++;
       yepokValidators.forEach(function(yepokValidator){
@@ -58,8 +58,6 @@ var yepok =  function(_argv, _validators, callback){
   
   // finish will only envoke now callback if all validators were syncronious
   ee.emit('finish');
-  
-  console.log('total numParams', numParams);
 };
 
 
