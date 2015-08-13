@@ -15,10 +15,10 @@ a command line argument validation helper
 
 **program.js**    
 ``` js
-var yepok = require('yepok');
+var yepok = require('../yepok');
 var validators = require('./my-validators.js');
 
-yepok(process.argv(slice(2), validators, function(err, minimist){
+yepok(process.argv.slice(2), validators, function(err, minimist){
   if (err) {
     console.log("ERROR:")
     return console.log(err);
@@ -27,7 +27,6 @@ yepok(process.argv(slice(2), validators, function(err, minimist){
   console.log(minimist)
 
 });
-
 ```
   
 **my-validators.js**  
@@ -36,16 +35,16 @@ var fs = require('fs')
 var path = require('path');
 
 var fileExists = function(parameter, callback){
-  var absolutePath = resoleve(parameter);
+  var absolutePath = path.resolve(parameter);
   fs.exists(absolutePath, function(exists){
     if (exists) return callback();
-    callback("file does not exits: " + paramiter);
+    callback("file does not exits: " + parameter);
   });
 }; 
 
 var isNumber = function(parameter, callback){
   var num = Number(parameter);
-  if (isNaN(num) return callback('not a number: ' + parameter');
+  if (isNaN(num)) return callback('not a number: ' + parameter);
   callback();
 };
 
@@ -74,9 +73,9 @@ MINIMIST:
 
 **BREAK IT**  
 ``` sh
-$ node program.js anythin goes --file /etc/lulwat.unicorn -n eight -n meow -v 'bad news bears'
+$ node program.js anything --file /etc/lul.unicorn -n eight -n meow -v 'bad news bears'
 ERROR:
-{  f: ['file does not exist: /etc/lulwat.unicorn'],
-  num: ['not a number: eight', 'not a number: meow'],
+{  file: ['file does not exist: /etc/lulwat.unicorn'],
+  n: ['not a number: eight', 'not a number: meow'],
   v: ['flag must not be followed by any parameters: bad news bears'] }
 ```
