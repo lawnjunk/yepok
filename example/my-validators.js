@@ -15,12 +15,19 @@ var isNumber = function(parameter, callback){
   callback();
 };
 
+var isLTEQ2Char = function(parameter, callback){
+  if (parameter.length <= 2) return callback();
+  callback("not less that or equal to two characters: " + parameter);
+};
+
 var validators = {
   _: '*',
   file: fileExists,
   f: fileExists,
   num: isNumber,
   n: isNumber,
+  cool: [isLTEQ2Char, isNumber],
+  c: [isLTEQ2Char, isNumber],
   verbose: true,
   v: true
 };
