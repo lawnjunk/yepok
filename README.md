@@ -7,43 +7,75 @@ a command line argument validation helper
 
 * parse args with minimist
 * validate args
- * success -> return minimist
+ * success -> return [minimist](https://github.com/substack/minimist)
  * failure -> return '{arg-name: [err0, err1], arg-name: ...}'
 
 ----
-#### example
+# example
 
+**program.js**    
+``` js
+var yepok = require('../yepok');
+var validators = require('./my-validators.js');
+
+yepok(process.argv.slice(2), validators, function(err, minimist){
+  if (err) {
+    console.log("ERROR:")
+    return console.log(err);
+  }
+  console.log("MINIMIST:");
+  console.log(minimist)
+
+});
 ```
-var fs = require('fs');
+  
+**my-validators.js**  
+``` js
+var fs = require('fs')
 var path = require('path');
 
-var yepok = require('yepok');
-
-var dashA = function(param, callback){
-  var abspath = path.resolve(param);
-  fs.exists(abspath, function(err, data){
-    if (err) return callback('file: [' + param + '] does not exist');
-    callback();
+var fileExists = function(parameter, callback){
+  var absolutePath = path.resolve(parameter);
+  fs.exists(absolutePath, function(exists){
+    if (exists) return callback();
+    callback("file does not exits: " + parameter);
   });
-};
+}; 
 
-var dashJS = functino(param, callback){
-  if (/*.js/.test(param){
-    callback()
-  }
-  callback('paramiter did not end in .js');
-  
+var isNumber = function(parameter, callback){
+  var num = Number(parameter);
+  if (isNaN(num)) return callback('not a number: ' + parameter);
+  callback();
 };
 
 var validators = {
-  a: dashA,
-  add: dashA,
-  js: dashJS
+  _: '*',
+  file: fileExists,
+  f: fileExists,
+  num: isNumber,
+  n: isNumber,
+  verbose: true,
+  v: true
 };
 
-yepok(process.argv.slice(2), validators, function(err, minimist){
-  if (err) return console.log(err);
-  console.log("HURRAY!!!!!");
-  console.log(minimist);
-});
+module.exports = validators;
+```  
+  
+**RUN IT**    
+``` sh
+$ node program.js anythin goes -f ./my-validators.js --num 100 -v
+MINIMIST:
+{ _: [ 'anythin', 'goes' ],
+  f: './my-validators.js',
+  num: 100,
+  v: true }
+```
+
+**BREAK IT**  
+``` sh
+$ node program.js anything --file /etc/lul.unicorn -n eight -n meow -v 'bad news bears'
+ERROR:
+{  file: ['file does not exist: /etc/lulwat.unicorn'],
+  n: ['not a number: eight', 'not a number: meow'],
+  v: ['flag must not be followed by any parameters: bad news bears'] }
 ```
