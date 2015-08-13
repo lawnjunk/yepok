@@ -48,12 +48,19 @@ var isNumber = function(parameter, callback){
   callback();
 };
 
+var isLTEQ2Char = function(parameter, callback){
+  if (parameter.length <= 2) return callback();
+  callback("not less that or equal to two characters: " + parameter);
+};
+
 var validators = {
   _: '*',
   file: fileExists,
   f: fileExists,
   num: isNumber,
   n: isNumber,
+  cool: [isLTEQ2Char, isNumber],
+  c: [isLTEQ2Char, isNumber],
   verbose: true,
   v: true
 };
@@ -63,19 +70,21 @@ module.exports = validators;
   
 **RUN IT**    
 ``` sh
-$ node program.js anythin goes -f ./my-validators.js --num 100 -v
+$ node program.js anythin goes -f ./my-validators.js --num 100 -c 42 -v
 MINIMIST:
 { _: [ 'anythin', 'goes' ],
   f: './my-validators.js',
   num: 100,
+  c: 42,
   v: true }
 ```
 
 **BREAK IT**  
 ``` sh
-$ node program.js anything --file /etc/lul.unicorn -n eight -n meow -v 'bad news bears'
+$ node program.js anything --file /etc/lul.unicorn -c wat -n eight -n meow -v 'bad news bears'
 ERROR:
 {  file: ['file does not exist: /etc/lulwat.unicorn'],
   n: ['not a number: eight', 'not a number: meow'],
+  c: ['not less than or equal to two characters: wat', 'not a number: wat'],
   v: ['flag must not be followed by any parameters: bad news bears'] }
 ```
