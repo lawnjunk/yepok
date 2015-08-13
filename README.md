@@ -15,7 +15,7 @@ a command line argument validation helper
 
 **program.js**    
 ``` js
-var yepok = require('../yepok');
+var yepok = require('yepok');
 var validators = require('./my-validators.js');
 
 yepok(process.argv.slice(2), validators, function(err, minimist){
