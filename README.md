@@ -89,6 +89,24 @@ ERROR:
   v: ['flag must not be followed by any parameters: bad news bears'] }
 ```  
 
+# validation options for flags and there parameters
+* ` '*' ` -> **astrix**
+ * will accept any and all input 
+* ` true ` -> **boolean**
+ * flag cannot have an parameter
+ * flag will be set to true by minimist
+* ** validaton function **
+``` 
+function (parameter, callback){
+  // callback() == success
+  // callback('error message') == failure
+  if (Number(paramter) > 100) return callback();
+  callback('parameter [' + parameter + '] must be number greater than 100');
+} 
+``` 
+ * envoke the callback with no arguments for success
+ * envoke the callback with an error for failure
+
 # install 
 with [npm](https://npmjs.org) do:  
 ``` sh 
