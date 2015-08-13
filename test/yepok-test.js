@@ -75,7 +75,7 @@ describe('yepok.js', function(){
     describe('with invailid usage', function(){
       var error;
       var minimist;
-      var argv = ['node', 'program.js', '-t', 'bad', '--test', 'bad', '-xy'];
+      var argv = ['node', 'program.js', '-t', 'bad', '--test', 'alsobad', '-xy'];
       before(function(done){
         yepok(argv.slice(2), {_:'*', t: true, test: true, x:true, y: true}, function(err, data){
           error = err;
@@ -85,8 +85,6 @@ describe('yepok.js', function(){
       });
 
       it('should return an error', function(){
-        console.log('error', error);
-        console.log('minim', minimist);
         expect(!!error).to.eql(true);
       });
 
@@ -94,11 +92,14 @@ describe('yepok.js', function(){
         expect(minimist).to.eql(undefined);
       });
 
-
-      it('should return what minmist would return', function(){
-        var minimistTest = minimistLib(argv.slice(2));
-        expect(minimist).to.eql(minimistTest);
+      it('err.t[0] should equal "flag must not be followed by any paramters: bad"', function(){
+        expect(error.t[0]).to.eql("flag must not be followed by any paramters: bad");
       });
+
+      it('err.test[0] should equal "flag must not be followed by any paramters: alsobad"', function(){
+        expect(error.test[0]).to.eql("flag must not be followed by any paramters: alsobad");
+      });
+
     });
   });
 
