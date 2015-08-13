@@ -103,6 +103,28 @@ describe('yepok.js', function(){
     });
   });
 
+  describe('with astrix validator', function(){
+      var error;
+      var minimist;
+      var argv = ['node', 'program.js', '-t', 'bad', '--test', 'alsobad', '-xy'];
+      before(function(done){
+        yepok(argv.slice(2), {_:'*', t: "*", test: "*", x:"*", y: "*"}, function(err, data){
+          error = err;
+          minimist = data;
+          done();
+        });
+      });
+
+      it('should not return an error', function(){
+        expect(!!error).to.eql(false);
+      });
+
+      it('should return what minimist would return', function(){
+        expect(minimist).to.eql(minimistLib(argv.slice(2)));
+      });
+
+  });
+
   describe('with sync validator', function(){
   });
 
