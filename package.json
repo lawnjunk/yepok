@@ -26,7 +26,7 @@
     "url": "git+https://github.com/slugbyte/yepok.git"
   },
   "author": "dwolfm@gmail.com",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/slugbyte/yepok/issues"
   },

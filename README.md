@@ -87,4 +87,13 @@ ERROR:
   n: ['not a number: eight', 'not a number: meow'],
   c: ['not less than or equal to two characters: wat', 'not a number: wat'],
   v: ['flag must not be followed by any parameters: bad news bears'] }
-```
+```  
+
+# install 
+with [npm](https://npmjs.org) do:  
+``` sh 
+npm install yepok 
+```  
+
+# license
+MIT  
