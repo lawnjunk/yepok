@@ -10,14 +10,14 @@ var ok = function(param, callback){
 var dashAll = function(param, callback){
   var abspath = path.resolve(param);
   fs.exists(abspath, function(exists){
-    if (!exists) return callback('file does not exists');
+    if (!exists) return callback('file does not exists: ' + param);
     callback();
   });
 } 
 
-console.log('wtf');
+console.log('process.argv', process.argv);
+console.log('process.argv.splice(2)', process.argv.splice(2));
 yepok(process.argv.splice(2), {_: ok, b: '*', a: dashAll , all: dashAll}, function(err, minimist){
-  console.log('wat');
  
   if (err) {
     console.log('ERROR:');
