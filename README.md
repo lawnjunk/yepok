@@ -60,44 +60,23 @@ var validators = {
 };
 
 module.exports = validators;
-```
-
-
-
-
- 
-
-```
-var fs = require('fs');
-var path = require('path');
-
-var yepok = require('yepok');
-
-var dashA = function(param, callback){
-  var abspath = path.resolve(param);
-  fs.exists(abspath, function(err, data){
-    if (err) return callback('file: [' + param + '] does not exist');
-    callback();
-  });
-};
-
-var dashJS = functino(param, callback){
-  if (/*.js/.test(param){
-    callback()
-  }
-  callback('paramiter did not end in .js');
+```  
   
-};
+**RUN IT**    
+``` sh
+$ node program.js anythin goes -f ./my-validators.js --num 100 -v
+MINIMIST:
+{ _: [ 'anythin', 'goes' ],
+  f: './my-validators.js',
+  num: 100,
+  v: true }
+```
 
-var validators = {
-  a: dashA,
-  add: dashA,
-  js: dashJS
-};
-
-yepok(process.argv.slice(2), validators, function(err, minimist){
-  if (err) return console.log(err);
-  console.log("HURRAY!!!!!");
-  console.log(minimist);
-});
+**BREAK IT**  
+``` sh
+$ node program.js anythin goes --file /etc/lulwat.unicorn -n eight -n meow -v 'bad news bears'
+ERROR:
+{  f: ['file does not exist: /etc/lulwat.unicorn'],
+  num: ['not a number: eight', 'not a number: meow'],
+  v: ['flag must not be followed by any parameters: bad news bears'] }
 ```
