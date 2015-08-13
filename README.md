@@ -7,11 +7,65 @@ a command line argument validation helper
 
 * parse args with minimist
 * validate args
- * success -> return minimist
+ * success -> return [minimist](https://github.com/substack/minimist)
  * failure -> return '{arg-name: [err0, err1], arg-name: ...}'
 
 ----
-#### example
+# example
+
+**program.js**    
+``` js
+var yepok = require('yepok');
+var validators = require('./my-validators.js');
+
+yepok(process.argv(slice(2), validators, function(err, minimist){
+  if (err) {
+    console.log("ERROR:")
+    return console.log(err);
+  }
+  console.log("MINIMIST:");
+  console.log(minimist)
+
+});
+
+```
+  
+**my-validators.js**  
+``` js
+var fs = require('fs')
+var path = require('path');
+
+var fileExists = function(parameter, callback){
+  var absolutePath = resoleve(parameter);
+  fs.exists(absolutePath, function(exists){
+    if (exists) return callback();
+    callback("file does not exits: " + paramiter);
+  });
+}; 
+
+var isNumber = function(parameter, callback){
+  var num = Number(parameter);
+  if (isNaN(num) return callback('not a number: ' + parameter');
+  callback();
+};
+
+var validators = {
+  _: '*',
+  file: fileExists,
+  f: fileExists,
+  num: isNumber,
+  n: isNumber,
+  verbose: true,
+  v: true
+};
+
+module.exports = validators;
+```
+
+
+
+
+ 
 
 ```
 var fs = require('fs');
