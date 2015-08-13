@@ -89,23 +89,25 @@ ERROR:
   v: ['flag must not be followed by any parameters: bad news bears'] }
 ```  
 
-# validation options for flags and there parameters
-* ` '*' ` -> **astrix**
- * will accept any and all input 
-* ` true ` -> **boolean**
- * flag cannot have an parameter
- * flag will be set to true by minimist
-* ** validaton function **
+# validatior options
+* **astrix**
+ * **example:** `{_: '*'}`
+ * will pass for any and all input 
+* **boolean**
+ * **example:** `{v: true, verbose: true}` 
+ * flag will be set to true by minimist if not followed by parameter
+ * if flag is followed by a parameter an error will be thrown
+* **validaton function**
 ``` 
 function (parameter, callback){
-  // callback() == success
-  // callback('error message') == failure
   if (Number(paramter) > 100) return callback();
   callback('parameter [' + parameter + '] must be number greater than 100');
 } 
 ``` 
+ * **example:** `{cool: [isNumber, isLTEQ2Char]}`
  * envoke the callback with no arguments for success
  * envoke the callback with an error for failure
+ * multiple validation functions can be used by placeing them in an array
 
 # install 
 with [npm](https://npmjs.org) do:  
