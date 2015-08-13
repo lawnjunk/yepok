@@ -1,6 +1,6 @@
 {
   "name": "yepok",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "a validation tool for minimist",
   "main": "yepok.js",
   "directories": {
