@@ -6,12 +6,12 @@ var fs = require('fs');
 var path = require('path');
 var minimistLib = require('minimist');
 
-var dashA = function(parameter, callback){
-  var abspath = path.resolve(param);
-  fs.readFile(path.toString(), function(err, data){
-    if (err) callback('file does not exist: ' + parameter);
-    callback();
-  });
+
+var dashASync = function(parameter, callback){
+  var abspath = path.resolve(parameter);
+  var exists = fs.existsSync(abspath);
+  if (exists) return callback();
+  callback('the file does not exist: ' + abspath);
 };
 
 describe('yepok.js', function(){
@@ -126,6 +126,24 @@ describe('yepok.js', function(){
   });
 
   describe('with sync validator', function(){
+    var error;
+    var minimist;
+    var argv = ['node', 'program.js', '-a', './'];
+    before(function(done){
+      yepok(argv.slice(2), {_: '*', a: dashASync}, function(err, data){
+        error = err;
+        minimist = data;
+        done();
+      });
+    });
+      it('should not return an error', function(){
+        expect(!!error).to.eql(false);
+      });
+
+      it('should not return minimist', function(){
+        expect(minimist).to.eql(minimistLib(argv.slice(2)));
+      });
+
   });
 
   describe('with async validator', function(){
