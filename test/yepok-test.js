@@ -7,11 +7,19 @@ var path = require('path');
 var minimistLib = require('minimist');
 
 
-var dashASync = function(parameter, callback){
+var dashSync = function(parameter, callback){
   var abspath = path.resolve(parameter);
   var exists = fs.existsSync(abspath);
   if (exists) return callback();
   callback('the file does not exist: ' + abspath);
+};
+
+var dashASync = function(parameter, callback){
+  var abspath = path.resolve(parameter);
+  fs.exists(abspath, function(exists){
+    if (exists) return callback();
+    callback('the file does not exist: ' + abspath);
+  });
 };
 
 describe('yepok.js', function(){
@@ -130,7 +138,7 @@ describe('yepok.js', function(){
     var minimist;
     var argv = ['node', 'program.js', '-a', './'];
     before(function(done){
-      yepok(argv.slice(2), {_: '*', a: dashASync}, function(err, data){
+      yepok(argv.slice(2), {_: '*', a: dashSync}, function(err, data){
         error = err;
         minimist = data;
         done();
@@ -147,6 +155,24 @@ describe('yepok.js', function(){
   });
 
   describe('with async validator', function(){
+    var error;
+    var minimist;
+    var argv = ['node', 'program.js', '-a', './'];
+    before(function(done){
+      yepok(argv.slice(2), {_: '*', a: dashASync}, function(err, data){
+        error = err;
+        minimist = data;
+        done();
+      });
+    });
+      it('should not return an error', function(){
+        expect(!!error).to.eql(false);
+      });
+
+      it('should not return minimist', function(){
+        expect(minimist).to.eql(minimistLib(argv.slice(2)));
+      });
+
   });
 });
 
