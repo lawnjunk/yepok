@@ -2,6 +2,7 @@ yep ok
 ======
 [![Build Status](https://travis-ci.org/slugbyte/yepok.svg?branch=master)](https://travis-ci.org/slugbyte/yepok)  
 
+![alt tag](https://raw.githubusercontent.com/slugbyte/yepok/master/yepok.gif)  
 a command line argument validation helper
 
 * parse args with minimist
