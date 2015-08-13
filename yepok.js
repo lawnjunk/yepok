@@ -4,7 +4,7 @@ var minimist = require('minimist');
 var _ = require('lodash');
 var EventEmitter = require('events').EventEmitter;
 var ee = new EventEmitter();
-var yepokValidators = require('./lib/default-validators.js')(ee);;
+var yepokValidators = require('./lib/default-validators.js')(ee);
 
 var yepok =  function(_argv, _validators, callback){
   var userValidators =  _validators || {};
@@ -23,7 +23,7 @@ var yepok =  function(_argv, _validators, callback){
     numOK++;
     if (paramCountDone && numOK == numParams){
       ee.emit('finish');
-    };
+    }
   });
 
   // called everytime there is an error
@@ -39,7 +39,7 @@ var yepok =  function(_argv, _validators, callback){
         return callback(verrs);
       }
       return callback(null, argv);
-    };
+    }
   });
 
   // validate each flag and its paramiter
