@@ -45,12 +45,23 @@ var yepok =  function(_argv, _validators, callback){
   // validate each flag and its paramiter
   _.forEach(argv, function(n, arg, array){
     var parameters = array[arg].toString().split(',');
-    _.forEach(parameters, function(param){
-      numParams++;
-      yepokValidators.forEach(function(yepokValidator){
-        yepokValidator(arg, userValidators[arg], param);
+    if (Array.isArray(userValidators[arg])){
+      for (var i=0; i<userValidators[arg].length; i++){
+        _.forEach(parameters, function(param){
+          numParams++;
+          yepokValidators.forEach(function(yepokValidator){
+              yepokValidator(arg, userValidators[arg][i], param);
+          });
+        });
+      }
+    } else {
+      _.forEach(parameters, function(param){
+        numParams++;
+        yepokValidators.forEach(function(yepokValidator){
+            yepokValidator(arg, userValidators[arg], param);
+        });
       });
-    });
+    }
   });
   
   // mark that all paramiters have been acounted for
